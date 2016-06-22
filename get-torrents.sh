@@ -3,7 +3,7 @@
 # linux-torrent.sh
 # Inspired by this script:
 #  https://github.com/ppaskowsky/Bash/blob/master/auto-linux-downloader.sh
-# Copyright (C) 2015 by skwerlman
+# Copyright (C) 2016 by skwerlman
 # 
 
 #============================== CONFIGURATION ===============================#

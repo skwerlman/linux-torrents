@@ -4,7 +4,7 @@
 # Inspired by this script:
 #  https://github.com/ppaskowsky/Bash/blob/master/auto-linux-downloader.sh
 # Copyright (C) 2016 by skwerlman
-# 
+#
 
 #============================== CONFIGURATION ===============================#
 
@@ -12,7 +12,8 @@
 #   where to save the downloaded .torrent files
 #   you should configure your torrent client to 'watch' this directory
 #   if you want it to download the ISOs automatically
-torrent_location='/media/torrent-files'
+#torrent_location='/media/torrent-files'
+torrent_location='/mnt/code/linux-torrents/temp'
 
 # cleanup_old:
 #   whether to delete old .torrent files or not
@@ -23,9 +24,152 @@ cleanup_old=false
 #   whether to allow echoing of status messages
 allow_output=true
 
+#  ------------------------------- DISTROS --------------------------------  #
+
+# friendly names for distros
+# <distro>='Distro Name'
+
+# pattern to exclude specific .torrent files
+# <distro>_exclude='pattern'
+
+# pattern to identify wanted .torrent files
+# <distro>_match='pattern'
+
+# urls of folders containing .torrent files
+# <distro>_url='iterable.directory.of/torrent/files'
+
+antergos='Antergos'
+antergos_match='*.torrent'
+antergos_url='http://mirror.umd.edu/antergos/iso/release/'
+
+# !! Arch is a special case !!
+arch='Arch'
+arch_url='ftp://mirror.rackspace.com/archlinux/iso/'
+
+# !! CentOS is a special case !!
+centos='CentOS'
+centos_match='*DVD*.torrent'
+centos_url='ftp://mirror.rackspace.com/CentOS/'
+
+debiancdamd64='Debian (1/4)'
+debiancdamd64_exclude='*update*'
+debiancdamd64_match='*netinst*'
+debiancdamd64_url='ftp://cdimage.debian.org/cdimage/release/current/amd64/bt-cd/'
+
+debiancdi386='Debian (2/4)'
+debiancdi386_exclude='*update*'
+debiancdi386_match='*netinst*'
+debiancdi386_url='ftp://cdimage.debian.org/cdimage/release/current/i386/bt-cd/'
+
+debiandvdamd64='Debian (3/4)'
+debiandvdamd64_exclude='*update*'
+debiandvdamd64_match='*.torrent'
+debiandvdamd64_url='ftp://cdimage.debian.org/cdimage/release/current/amd64/bt-dvd/'
+
+debiandvdi386='Debian (4/4)'
+debiandvdi386_exclude='*update*'
+debiandvdi386_match='*.torrent'
+debiandvdi386_url='ftp://cdimage.debian.org/cdimage/release/current/i386/bt-dvd/'
+
+edubuntu='Edubuntu'
+edubuntu_match='*.torrent'
+edubuntu_url='ftp://cdimage.ubuntu.com/cdimage/edubuntu/releases/'
+
+fedoraserver='Fedora'
+fedoraserver_match='*.torrent'
+fedoraserver_url='https://torrent.fedoraproject.org/torrents/'
+
+kali='Kali'
+kali_match='*.torrent'
+kali_url='http://images.kali.org/'
+
+kubuntu='Kubuntu'
+kubuntu_match='*.torrent'
+kubuntu_url='ftp://cdimage.ubuntu.com/cdimage/kubuntu/releases/'
+
+lubuntu='Lubuntu'
+lubuntu_match='*.torrent'
+lubuntu_url='ftp://cdimage.ubuntu.com/cdimage/lubuntu/releases/'
+
+mageia='Mageia'
+mageia_match='*.torrent'
+mageia_url='http://distro.ibiblio.org/mageia/iso/cauldron/torrents/'
+
+mythbuntu='Mythbuntu'
+mythbuntu_match='*.torrent'
+mythbuntu_url='ftp://cdimage.ubuntu.com/cdimage/mythbuntu/releases/'
+
+netbsd='NetBSD'
+netbsd_match='*.torrent'
+netbsd_url='ftp://mirror.planetunix.net/pub/NetBSD/iso/'
+
+opensuse='OpenSUSE'
+opensuse_match='*DVD*.torrent'
+opensuse_url='http://download.opensuse.org/distribution/openSUSE-current/iso/'
+
+raspbian='Raspberry Pi'
+raspbian_match='*.torrent'
+raspbian_url='http://downloads.raspberrypi.org/raspbian/images/'
+
+sabayon='Sabayon'
+sabayon_match="*$sabayon_release*.torrent"
+sabayon_url='ftp://mirror.cs.vt.edu/pub/SabayonLinux/iso/monthly/'
+
+slackware='Slackware'
+slackware_exclude='*source*'
+slackware_match='*dvd*'
+slackware_url='http://www.slackware.com/torrents/'
+
+stephensonsrocket="Stephenson's Rocket"
+stephensonsrocket_match='*.torrent'
+stephensonsrocket_url='https://download.stephensonsrocket.horse/release/'
+
+tails='TAILS'
+tails_match='*.torrent'
+tails_url='https://tails.boum.org/torrents/files/'
+
+ubuntu='Ubuntu'
+ubuntu_match='*.torrent'
+ubuntu_url='ftp://releases.ubuntu.com/releases/'
+
+ubuntugnome='Ubuntu GNOME'
+ubuntugnome_match='*.torrent'
+ubuntugnome_url='ftp://cdimage.ubuntu.com/cdimage/ubuntu-gnome/releases/'
+
+ubuntukylin='Ubuntu Kylin'
+ubuntukylin_match='*.torrent'
+ubuntukylin_url='ftp://cdimage.ubuntu.com/cdimage/ubuntukylin/releases/'
+
+ubuntumate='Ubuntu MATE'
+ubuntumate_match='*.torrent'
+ubuntumate_url='ftp://cdimage.ubuntu.com/cdimage/ubuntu-mate/releases/'
+
+ubuntustudio='Ubuntu Studio'
+ubuntustudio_match='*.torrent'
+ubuntustudio_url='ftp://cdimage.ubuntu.com/cdimage/ubuntustudio/releases/'
+
+xubuntu='Xubuntu'
+xubuntu_match='*.torrent'
+xubuntu_url='ftp://cdimage.ubuntu.com/cdimage/xubuntu/releases/'
+
+#  ------------------------------------------------------------------------  #
+
+needs_version_info='arch centos edubuntu kubuntu lubuntu mythbuntu netbsd ubuntu ubuntugnome ubuntukylin ubuntumate ubuntustudio xubuntu'
+
+no_exclusions='edubuntu kubuntu lubuntu mythbuntu netbsd raspbian ubuntu ubuntugnome ubuntukylin ubuntumate ubuntustudio xubuntu'
+
+exclusions_no_version_info='debiancdamd64 debiancdi386 debiandvdamd64 debiandvdi386 slackware'
+
+no_exclusions_no_version_info='antergos fedoraserver mageia opensuse sabayon stephensonsrocket tails'
+
 #============================================================================#
 
+# # # # # # # # # # # # # # # # #
+# IGNORE EVERYTHING  BELOW HERE #
+# IT WILL MAKE  YOUR EYES BLEED #
+# # # # # # # # # # # # # # # # #
 
+# You've been warned...
 
 mkdir -p "$torrent_location/"
 
@@ -48,109 +192,17 @@ if [ $cleanup_old = true ] ; then
 	rm -r $torrent_location/*
 fi
 
-# friendly names for distros
-archnetinstdual='Arch'
-centos='CentOS'
-debiancdamd64='Debian (1/4)'
-debiancdi386='Debian (2/4)'
-debiandvdamd64='Debian (3/4)'
-debiandvdi386='Debian (4/4)'
-edubuntu='Edubuntu'
-fedoraserver='Fedora (1/2)'
-fedoraworkstation='Fedora (2/2)'
-kali='Kali'
-kubuntu='Kubuntu'
-lubuntu='Lubuntu'
-mageia='Mageia'
-mythbuntu='Mythbuntu'
-netbsd='NetBSD'
-opensuse='OpenSUSE'
-raspbian='Raspberry Pi'
-sabayon='Sabayon'
-slackware='Slackware'
-spikepentesting='Spike Pentesting'
-stephensonsrocket="Stephenson's Rocket"
-tails='TAILS'
-ubuntu='Ubuntu'
-ubuntugnome='Ubuntu GNOME'
-ubuntukylin='Ubuntu Kylin'
-ubuntumate='Ubuntu MATE'
-ubuntustudio='Ubuntu Studio'
-xubuntu='Xubuntu'
-
-# urls of folders containing .torrent files
-archnetinstdual_url='ftp://mirror.rackspace.com/archlinux/iso/'
-centos_url='ftp://mirror.rackspace.com/CentOS/'
-debiancdamd64_url='ftp://cdimage.debian.org/cdimage/release/current/amd64/bt-cd/'
-debiancdi386_url='ftp://cdimage.debian.org/cdimage/release/current/i386/bt-cd/'
-debiandvdamd64_url='ftp://cdimage.debian.org/cdimage/release/current/amd64/bt-dvd/'
-debiandvdi386_url='ftp://cdimage.debian.org/cdimage/release/current/i386/bt-dvd/'
-edubuntu_url='ftp://cdimage.ubuntu.com/cdimage/edubuntu/releases/'
-fedoraserver_url='https://torrent.fedoraproject.org/torrents/'
-fedoraworkstation_url='https://torrent.fedoraproject.org/torrents/'
-kali_url='http://ftp.cc.uoc.gr/mirrors/linux/kali/kali-images/kali-latest/amd64/'
-kubuntu_url='ftp://cdimage.ubuntu.com/cdimage/kubuntu/releases/'
-lubuntu_url='ftp://cdimage.ubuntu.com/cdimage/lubuntu/releases/'
-mageia_url='http://distro.ibiblio.org/mageia/iso/cauldron/torrents/'
-mythbuntu_url='ftp://cdimage.ubuntu.com/cdimage/mythbuntu/releases/'
-netbsd_url='ftp://mirror.planetunix.net/pub/NetBSD/iso/'
-opensuse_url='ftp://www.gtlib.gatech.edu/pub/opensuse/distribution/openSUSE-stable/iso/'
-raspbian_url='http://downloads.raspberrypi.org/raspbian/images/'
-sabayon_url='ftp://mirror.cs.vt.edu/pub/SabayonLinux/iso/monthly/'
-slackware_url='http://www.slackware.com/torrents/'
-spikepentesting_url='https://mirror.spike-pentesting.org/mirrors/spike/isos/torrents/'
-stephensonsrocket_url='https://download.stephensonsrocket.horse/release/'
-tails_url='https://tails.boum.org/torrents/files/'
-ubuntu_url='ftp://releases.ubuntu.com/releases/'
-ubuntugnome_url='ftp://cdimage.ubuntu.com/cdimage/ubuntu-gnome/releases/'
-ubuntukylin_url='ftp://cdimage.ubuntu.com/cdimage/ubuntukylin/releases/'
-ubuntumate_url='ftp://cdimage.ubuntu.com/cdimage/ubuntu-mate/releases/'
-ubuntustudio_url='ftp://cdimage.ubuntu.com/cdimage/ubuntustudio/releases/'
-xubuntu_url='ftp://cdimage.ubuntu.com/cdimage/xubuntu/releases/'
-
-# pattern to identify wanted .torrent files
-centos_match='*DVD*.torrent'
-debiancdamd64_match='*netinst*'
-debiancdi386_match='*netinst*'
-debiandvdamd64_match='*.torrent'
-debiandvdi386_match='*.torrent'
-edubuntu_match='*.torrent'
-fedoraserver_match='*Server*'
-fedoraworkstation_match='*Workstation*'
-kali_match='*.torrent'
-kubuntu_match='*.torrent'
-lubuntu_match='*.torrent'
-mageia_match='*.torrent'
-mythbuntu_match='*.torrent'
-netbsd_match='*.torrent'
-opensuse_match='*DVD*.torrent'
-raspbian_match='*.torrent'
-sabayon_match="*$sabayon_release*.torrent"
-slackware_match='*dvd*'
-spikepentesting_match='*.torrent'
-stephensonsrocket_match='*.torrent'
-tails_match='*.torrent'
-ubuntu_match='*.torrent'
-ubuntugnome_match='*.torrent'
-ubuntukylin_match='*.torrent'
-ubuntumate_match='*.torrent'
-ubuntustudio_match='*.torrent'
-xubuntu_match='*.torrent'
-
-# pattern to exclude specific .torrent files
-debiancdamd64_exclude='*update*'
-debiancdi386_exclude='*update*'
-debiandvdamd64_exclude='*update*'
-debiandvdi386_exclude='*update*'
-fedoraserver_exclude='*Alpha*'
-fedoraworkstation_exclude='*Alpha*'
-slackware_exclude='*source*'
+rm_non_torrents() {
+	GLOBIGNORE="*.torrent*"
+	rm -v $torrent_location/* 2>/dev/null | cut -d' ' -f2 | while read line; do echo "Deleting $line"; done
+	GLOBIGNORE=""
+}
 
 #============================================================================#
 # Get version info for distros that need it
 
-for os in archnetinstdual centos edubuntu kubuntu lubuntu mythbuntu netbsd ubuntu ubuntugnome ubuntukylin ubuntumate ubuntustudio xubuntu ; do
-	# oh man there is so much indirection here i might cry
+for os in $needs_version_info ; do
+	# OH GOD THE INDIRECTION
 	echo2 "Getting version info for: `eval echo \\\$\$os`"
 	eval "$os"_release=`curl -s --disable-epsv -l \`eval echo \\\$\\\`eval echo $os\\\`_url\` | sort -n -r | awk NR==1`
 done
@@ -165,36 +217,41 @@ sabayon_release=`curl -s --disable-epsv $sabayon/LATEST_IS`
 # Version info
 # No exclusion pattern
 
-for os in edubuntu kubuntu lubuntu mythbuntu netbsd raspbian ubuntu ubuntugnome ubuntukylin ubuntumate ubuntustudio xubuntu ; do
+for os in $no_exclusions ; do
 	echo2 "Downloading torrent files for: `eval echo \\\$\$os`"
 	wget -q -nc -nv -r -nH --cut-dirs=6 --no-parent -A `eval echo \$\`eval echo $os\`_match` `eval echo \$\`eval echo $os\`_url``eval echo \$\`eval echo $os\`_release`/ -P "$torrent_location/"
+	rm_non_torrents
 done
 
 #=== TYPE 2 =================================================================#
 # Exclusion pattern
 # No version info
 
-for os in debiancdamd64 debiancdi386 debiandvdamd64 debiandvdi386 fedoraserver fedoraworkstation slackware ; do
+for os in $exclusions_no_version_info ; do
 	echo2 "Downloading torrent files for: `eval echo \\\$\$os`"
-	wget -q -nc -nv -r -nH --cut-dirs=5 --no-parent -A `eval echo \$\`eval echo $os\`_match` -R `eval echo \$\`eval echo $os\`_exclude` `eval echo \$\`eval echo $os\`_url`/ -P "$torrent_location/"
+	wget -q -nc -nv -r -nH --cut-dirs=6 --no-parent -A `eval echo \$\`eval echo $os\`_match` -R `eval echo \$\`eval echo $os\`_exclude` `eval echo \$\`eval echo $os\`_url` -P "$torrent_location/"
+	rm_non_torrents
 done
 
 #=== TYPE 3 =================================================================#
 # No exclusion pattern or version info
 
-for os in kali mageia opensuse sabayon spikepentesting stephensonsrocket tails ; do
+for os in $no_exclusions_no_version_info ; do
 	echo2 "Downloading torrent files for: `eval echo \\\$\$os`"
-	wget -q -nc -nv -r -nH --cut-dirs=6 --no-parent -A `eval echo \$\`eval echo $os\`_match` `eval echo \$\`eval echo $os\`_url`/ -P "$torrent_location/"
+	wget -q -nc -nv -r -nH --cut-dirs=6 --no-parent -A `eval echo \$\`eval echo $os\`_match` `eval echo \$\`eval echo $os\`_url` -P "$torrent_location/"
+	rm_non_torrents
 done
 
 #=== TYPE 4 =================================================================#
 # Special cases
 
 echo2 "Downloading torrent files for: Arch"
-wget -q -nc -nv $archnetinstdual_url$archnetinstdual_release/*dual.iso.torrent -P "$torrent_location/"
+wget -q -nc -nv $arch_url$arch_release/*dual.iso.torrent -P "$torrent_location/"
 
 echo2 "Downloading torrent files for: CentOS"
-wget -q -nc -nv -r -nH --cut-dirs=5 --no-parent -A $centos_match $centos_url$centos_release/isos/x86_64/ -P "$torrent_location/"
+wget -q -nc -nv -r -nH --cut-dirs=6 --no-parent -A $centos_match $centos_url$centos_release/isos/x86_64/ -P "$torrent_location/"
+
+rm_non_torrents
 
 #============================================================================#
 
@@ -205,11 +262,6 @@ for folder in $torrent_location/* ; do
 		rm -rv $folder | while read line; do echo "Deleting $line"; done
 	fi
 done
-
-# delete all files not ending in .torrent
-GLOBIGNORE="*.torrent*"
-rm -v $torrent_location/* | while read line; do echo "Deleting $line"; done 2>/dev/null
-GLOBIGNORE=""
 
 ending_filenum=`count`
 end_time="$SECONDS"
